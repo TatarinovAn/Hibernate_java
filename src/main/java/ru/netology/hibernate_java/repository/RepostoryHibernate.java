@@ -1,22 +1,19 @@
 package ru.netology.hibernate_java.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.netology.hibernate_java.entity.Person;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Repository
-@AllArgsConstructor
-public class RepostoryHibernate {
-    @PersistenceContext
-    private EntityManager entityManager;
+public interface RepostoryHibernate extends JpaRepository<Person, Integer> {
 
-    public List<Person> getPeople(String city) {
-        var nativeQuery = entityManager.createNativeQuery("select * from persons where city_of_living = :city order by city_of_living", Person.class);
-        nativeQuery.setParameter("city", city);
-        return nativeQuery.getResultList();
-    }
+    List<Person> findByCityOfLiving(String city);
+    Optional<Person> findPersonByPersonId_NameAndPersonId_Surname(String name, String surname);
+    List<Person> findByPersonId_AgeLessThanOrderByPersonId_Age(int age);
+
+
 }
