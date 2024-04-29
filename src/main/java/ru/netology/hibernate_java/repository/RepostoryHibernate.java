@@ -12,7 +12,9 @@ import java.util.Optional;
 public interface RepostoryHibernate extends JpaRepository<Person, Integer> {
 
     List<Person> findByCityOfLiving(String city);
+
     Optional<Person> findPersonByPersonId_NameAndPersonId_Surname(String name, String surname);
+
     List<Person> findByPersonId_AgeLessThanOrderByPersonId_Age(int age);
 
 
