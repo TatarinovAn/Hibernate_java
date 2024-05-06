@@ -19,7 +19,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity (securedEnabled = true, prePostEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -29,24 +29,31 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails reader = User.builder()
+                .username("reader")
+                .password(passwordEncoder().encode("reader"))
+                .roles("READER")
+                .build();
+        UserDetails writer = User.builder()
+                .username("writer")
+                .password(passwordEncoder().encode("writer"))
+                .roles("WRITER")
+                .build();
         UserDetails admin = User.builder()
                 .username("admin")
                 .password(passwordEncoder().encode("admin"))
-                .roles("ADMIN")
+                .roles("READER", "WRITER", "DELETE")
                 .build();
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("user"))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(admin, reader, writer);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(aut -> aut.requestMatchers("/persons/all/**").permitAll()
-                .anyRequest().authenticated()).formLogin(withDefaults());
-
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().authenticated()
+                )
+                .formLogin(withDefaults());
         return http.build();
     }
 }

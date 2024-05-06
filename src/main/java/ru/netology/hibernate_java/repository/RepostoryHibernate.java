@@ -17,5 +17,7 @@ public interface RepostoryHibernate extends JpaRepository<Person, Integer> {
 
     List<Person> findByPersonId_AgeLessThanOrderByPersonId_Age(int age);
 
+    List<Person> findByPhoneNumber(String phone);
+
 
 }
